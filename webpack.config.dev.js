@@ -9,6 +9,7 @@ module.exports = {
   devtool: 'eval-source-map', 
   module: {
     rules: [
+/*
       {
         enforce: 'pre', 
         loader: 'tslint-loader', 
@@ -20,6 +21,7 @@ module.exports = {
           emitErrors: true
         }
       }, 
+*/
       {
         loader: 'ts-loader', 
         test: /\.ts$/, 
@@ -40,6 +42,7 @@ module.exports = {
     path: path.resolve(__dirname, 'dist')
   }, 
   devServer: {
-    contentBase: "./dist"
+    //contentBase: "./dist"
+    contentBase: "./"
   }
 };
