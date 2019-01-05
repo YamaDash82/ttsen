@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --config webpack.config.dev.js",
-    "start": "webpack-dev-server --open --config webpack.config.dev.js", 
-    "server":"node ./dist/server.js"
+    "start": "webpack-dev-server --open --config webpack.config.dev.js",
+    "server": "node ./dist/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
     "express": "^4.16.4",
     "tedious": "^3.0.1"
   },
