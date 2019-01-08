@@ -6,7 +6,9 @@ const config = {
     truestedConnection: true,
     database: 'BoatRace', 
     port: 1433, 
-    encrypt: false
+    encrypt: false, 
+    rowCollectionOnRequestCompletion: true, 
+    //rowCollectionOnDone: true 
   }
 };
 

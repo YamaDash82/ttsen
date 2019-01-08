@@ -1,9 +1,11 @@
 import * as Express from 'express';
 import * as Tedious from 'tedious';
 import connConfig from './conn.config';
+import { RecordGetter } from './RecordGetter';
 
 const app = Express();
-const Connection = require('tedious').Connection;
+//const Connection = require('tedious').Connection;
+const Connection = Tedious.Connection;
 
 const ejs = require('ejs');
 app.engine('ejs', ejs.renderFile);
@@ -11,6 +13,13 @@ app.engine('ejs', ejs.renderFile);
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
 
+// CORS settings.
+var allowCrossDomain = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'X-Requested-With');
+  next();
+}
+app.use(allowCrossDomain);
 
 /*
 const config = {
@@ -25,6 +34,25 @@ const config = {
   }
 };
 */
+
+app.get('/rg', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+  const racerList = new RecordGetter('SELECT * FROM M_ボートレーサー');
+  let compFlag : boolean = false;
+  let gettedRows: any[] = [];
+
+  racerList.execute((completed: boolean, rowCount: number, rows: any[]) => {
+    compFlag = completed;
+  
+    gettedRows = rows;
+  });
+
+  
+  setTimeout(()=>{res.json(gettedRows);}
+  , 100);
+  
+  
+});
+
 app.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
   return res.send('Hello World');
 });
@@ -95,7 +123,7 @@ app.get('/add', (req: Express.Request, res: Express.Response, next: Express.Next
     executeStatement();
   });
   
-  connection.on('end', (err: Tedious.ConnectionError) => {
+  connection.on('end', () => {
     res.send('新規追加完了');
   });
 
