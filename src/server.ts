@@ -43,13 +43,13 @@ app.get('/rg', (req: Express.Request, res: Express.Response, next: Express.NextF
   racerList.execute((completed: boolean, rowCount: number, rows: any[]) => {
     compFlag = completed;
   
-    gettedRows = rows;
+    res.json(rows);
   });
 
-  
+  /*
   setTimeout(()=>{res.json(gettedRows);}
   , 100);
-  
+  */
   
 });
 

@@ -1,0 +1,40 @@
+[
+  [
+    {
+      "value":4444,
+      "metadata":{
+        "userType":0,
+        "flags":9,
+        "type":{"id":38,"type":"INTN","name":"IntN","dataLengthLength":1},
+        "colName":"登録番号",
+        "dataLength":2
+      }
+    },
+    {
+      "value":"桐生　順平",
+      "metadata":{
+        "userType":0,
+        "flags":9,
+        "type":{
+          "id":231,
+          "type":"NVARCHAR",
+          "name":"NVarChar",
+          "hasCollation":true,
+          "dataLengthLength":2,
+          "maximumLength":4000
+        },
+        "colName":"名前",
+        "collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40
+      }
+    },
+    {
+      "value":"ｷﾘｭｳ　ｼﾞｭﾝﾍﾟｲ",
+      "metadata":{
+        "userType":0,
+        "flags":9,
+        "type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},
+        "colName":"フリガナ",
+        "collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40
+      }
+    }
+  ],[{"value":4150,"metadata":{"userType":0,"flags":9,"type":{"id":38,"type":"INTN","name":"IntN","dataLengthLength":1},"colName":"登録番号","dataLength":2}},{"value":"山田　雄太","metadata":{"userType":0,"flags":9,"type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},"colName":"名前","collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40}},{"value":"ﾔﾏﾀﾞ　ﾕｳﾀ","metadata":{"userType":0,"flags":9,"type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},"colName":"フリガナ","collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40}}],[{"value":4678,"metadata":{"userType":0,"flags":9,"type":{"id":38,"type":"INTN","name":"IntN","dataLengthLength":1},"colName":"登録番号","dataLength":2}},{"value":"水野　望美","metadata":{"userType":0,"flags":9,"type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},"colName":"名前","collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40}},{"value":"ﾐｽﾞﾉ　ﾉｿﾞﾐ","metadata":{"userType":0,"flags":9,"type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},"colName":"フリガナ","collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40}}],[{"value":3294,"metadata":{"userType":0,"flags":9,"type":{"id":38,"type":"INTN","name":"IntN","dataLengthLength":1},"colName":"登録番号","dataLength":2}},{"value":"野中　義生","metadata":{"userType":0,"flags":9,"type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},"colName":"名前","collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40}},{"value":"ﾉﾅｶ　ﾖｼｵ","metadata":{"userType":0,"flags":9,"type":{"id":231,"type":"NVARCHAR","name":"NVarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":4000},"colName":"フリガナ","collation":{"lcid":1041,"flags":208,"version":0,"sortId":0,"codepage":"CP932"},"dataLength":40}}]]
