@@ -16,8 +16,24 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
 
   const executeStatement = () => {
     const records: any[] = [];
+    const records2 : any[] = [];
+
     let row : any = {};
-    
+    let row2: any = {};
+
+    const request2 = new Tedious.Request('SELECT * FROM BoatRace.dbo.M_ボートレース場', (error: Tedious.RequestError, rowCount: number) => {
+      res.send(records2);
+    });
+
+    request2.on('row', (columns: Tedious.ColumnValue[]) => {
+      columns.forEach((column: Tedious.ColumnValue) => {
+        row2[column.metadata.colName] = column.value;
+      });
+
+      records2.push(row2);
+      row2 = {};
+    });
+
     const request = new Tedious.Request('SELECT * FROM BoatRace.dbo.M_ボートレーサー', (error: Tedious.RequestError, rowCount: number) => {
       if(error){
         res.send(error.message);
@@ -25,7 +41,7 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
       }
 
       //コネクションを閉じる。
-      conn.close();
+      //conn.close();
       res.send(records);
     });
 
@@ -38,7 +54,14 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
       row = {};
     });
 
-    conn.execSql(request);
+    const requests : Tedious.Request[] = [];
+    //requests.push(request);
+    requests.push(request2);
+
+    requests.forEach((currentReq: Tedious.Request) => {
+      conn.execSql(currentReq);
+    });
+    
   };
 });
 
