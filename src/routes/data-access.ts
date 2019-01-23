@@ -3,12 +3,6 @@ import * as Tedious from 'tedious';
 import { ConnectionFactory } from '../ConnectionFactory';
 const router = Express.Router();
 
-class BoatRacer {
-  TorokuBango : number;
-  Namae : string; 
-  Furigana: string;
-}
-
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
   const conn: Tedious.Connection = ConnectionFactory.getConnection();
   
@@ -22,9 +16,9 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
 
   const executeStatement = () => {
     const records: any[] = [];
-    let row : BoatRacer;
-
-    const request = new Tedious.Request('SELECT 登録番号 as TorokuBango, 名前 as Namae, フリガナ as Furigana FROM BoatRace.dbo.M_ボートレーサー', (error: Tedious.RequestError, rowCount: number) => {
+    let row : any = {};
+    
+    const request = new Tedious.Request('SELECT * FROM BoatRace.dbo.M_ボートレーサー', (error: Tedious.RequestError, rowCount: number) => {
       if(error){
         res.send(error.message);
         return;
@@ -36,11 +30,12 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
     });
 
     request.on('row', (columns: Tedious.ColumnValue[]) => {
-      row = new BoatRacer();
       columns.forEach((column: Tedious.ColumnValue) => {
         row[column.metadata.colName] = column.value;
       });
       records.push(row);
+
+      row = {};
     });
 
     conn.execSql(request);
