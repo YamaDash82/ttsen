@@ -3,9 +3,48 @@ import * as Tedious from 'tedious';
 import { ConnectionFactory } from '../ConnectionFactory';
 const router = Express.Router();
 
+interface SQLRequest{
+  queryName: string;
+  source: string;
+}
+interface RequestData {
+  requests: SQLRequest[];
+}
+class ResultData {
+  queryName: string;
+  records: any[];
+
+  constructor(){
+    this.queryName = "";
+    this.records = [];
+  }
+}
+
+const dummyRequestData: RequestData = {
+  requests: [
+    {
+      queryName: "M_ボートレーサー", 
+      source: "SELECT * FROM BoatRace.dbo.M_ボートレーサー"
+    }, 
+    {
+      queryName: "M_ボートレース場", 
+      source: "SELECT * FROM BoatRace.dbo.M_ボートレース場"
+    }
+  ]
+};
+
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+  //ダミーのリクエストデータを生成。
+  const dummyRequest = JSON.stringify(dummyRequestData);
+  const dreqs: RequestData = JSON.parse(dummyRequest);
   const conn: Tedious.Connection = ConnectionFactory.getConnection();
-  
+  const reqCount = dreqs.requests.length;
+  let current: number = 0;
+  let requests: Tedious.Request[] = [];
+  let results: ResultData[] = [];
+  let result: ResultData;
+  let completedCount: number = 0;
+
   conn.on('connect', (err: Tedious.ConnectionError) => {
     if(err){
       res.send(err.message);
@@ -14,54 +53,58 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
     executeStatement();
   });
 
+  const trySend = () => {
+    if(completedCount===reqCount){
+      res.json(results);
+    }
+  };
+
   const executeStatement = () => {
-    const records: any[] = [];
-    const records2 : any[] = [];
+    const sqlRequests: SQLRequest[] = dreqs.requests;
+    let records: any[] = [];
 
-    let row : any = {};
-    let row2: any = {};
+    sqlRequests.forEach((sqlRequest) => {
+      let row: any = {};
+      console.log('リクエスト生成');
+      const request = new Tedious.Request(sqlRequest.source, (error: Tedious.RequestError) => {
+        completedCount++;
 
-    const request2 = new Tedious.Request('SELECT * FROM BoatRace.dbo.M_ボートレース場', (error: Tedious.RequestError, rowCount: number) => {
-      res.send(records2);
-    });
+        if(error){
+          console.log("エラー内容:" + error);
+          return;
+        }
 
-    request2.on('row', (columns: Tedious.ColumnValue[]) => {
-      columns.forEach((column: Tedious.ColumnValue) => {
-        row2[column.metadata.colName] = column.value;
+        result = new ResultData();
       });
 
-      records2.push(row2);
-      row2 = {};
-    });
+      console.log('行イベント生成');
+      request.on('row', (columns: Tedious.ColumnValue[]) => {
+        columns.forEach((column: Tedious.ColumnValue) => {
+          row[column.metadata.colName] = column.value;
+        });
+        console.log(`行の内容:${JSON.stringify(row)}`);
+        records.push(row);
 
-    const request = new Tedious.Request('SELECT * FROM BoatRace.dbo.M_ボートレーサー', (error: Tedious.RequestError, rowCount: number) => {
-      if(error){
-        res.send(error.message);
-        return;
-      }
-
-      //コネクションを閉じる。
-      //conn.close();
-      res.send(records);
-    });
-
-    request.on('row', (columns: Tedious.ColumnValue[]) => {
-      columns.forEach((column: Tedious.ColumnValue) => {
-        row[column.metadata.colName] = column.value;
+        row = {};
       });
-      records.push(row);
 
-      row = {};
+      request.on('requestCompleted', () => {
+        if(++current in sqlRequests){
+          conn.execSql(requests[current]);
+        }
+
+        result.queryName = sqlRequest.queryName;
+        result.records = records;
+        results.push(result);
+        records = [];
+        console.log("trySend前:" + sqlRequest.source + ", recors:" + JSON.stringify(records));
+        trySend();
+      });
+
+      requests.push(request);
     });
 
-    const requests : Tedious.Request[] = [];
-    //requests.push(request);
-    requests.push(request2);
-
-    requests.forEach((currentReq: Tedious.Request) => {
-      conn.execSql(currentReq);
-    });
-    
+    conn.execSql(requests[0]);
   };
 });
 
