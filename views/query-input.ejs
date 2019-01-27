@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>クエリ入力</title>
+</head>
+<body>
+  <form action="/data-access" method="post">
+    <label for="source">クエリ:</label>
+    <input type="hidden" name="queryName" value="dummyQuery">
+    <textarea name="source" id="source" cols="30" rows="10">
+      SELECT * FROM BoatRace.dbo.M_ボートレーサー
+    </textarea>
+    <input type="submit" value="送信">
+  </form>
+</body>
+</html>

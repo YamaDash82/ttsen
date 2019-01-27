@@ -24,4 +24,17 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
   requestReceiver.execute();
 });
 
+router.post('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+  //RequestReceiverクラスのインスタンスを生成する。
+  let requestedData: RequestedData = {
+    requests: [
+      req.body
+    ]
+  };
+
+  const requestReceiver = new RequestReceiver(JSON.stringify(requestedData), res);
+  //処理を実行する。requestReceiverに渡したResponseに取得したデータを渡してフロントに返している。
+  requestReceiver.execute();
+});
+
 export default router;
