@@ -1,15 +1,18 @@
 import * as Express from 'express';
 import * as Tedious from 'tedious';
-import { ConnectionFactory } from '../ConnectionFactory';
+import { ConnectionFactory } from '../yycomp/connection-factory';
 const router = Express.Router();
+
 
 interface SQLRequest{
   queryName: string;
   source: string;
 }
+
 interface RequestData {
   requests: SQLRequest[];
 }
+
 class ResultData {
   queryName: string;
   records: any[];
@@ -73,8 +76,6 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
           console.log("エラー内容:" + error);
           return;
         }
-
-        result = new ResultData();
       });
 
       console.log('行イベント生成');
@@ -92,7 +93,7 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
         if(++current in sqlRequests){
           conn.execSql(requests[current]);
         }
-
+        result = new ResultData();
         result.queryName = sqlRequest.queryName;
         result.records = records;
         results.push(result);
