@@ -19,7 +19,7 @@
     "cookie-parser": "^1.4.3",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
-    "tedious": "^3.0.1"
+    "tedious": "^4.2.0"
   },
   "devDependencies": {
     "@types/express": "^4.16.0",

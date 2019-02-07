@@ -50,9 +50,9 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
     bulkLoad.addColumn('名前', Tedious.TYPES.NVarChar, { length: 20, nullable: true, objName: "Name1"});
     bulkLoad.addColumn('フリガナ', Tedious.TYPES.NVarChar, { length: 20, nullable: true, objName: "Furigana1" });
     */
-    bulkLoad.addColumn('登録番号', Tedious.TYPES.SmallInt, { length: "max", nullable: false});
-    bulkLoad.addColumn('名前', Tedious.TYPES.NVarChar, { length: 20, nullable: true});
-    bulkLoad.addColumn('フリガナ', Tedious.TYPES.NVarChar, { length: 20, nullable: true});
+    bulkLoad.addColumn("登録番号", Tedious.TYPES.SmallInt, { length: Infinity, nullable: false, objName: "No1"});
+    bulkLoad.addColumn("名前", Tedious.TYPES.NVarChar, { length: 20, nullable: true, objName: "Name1"});
+    bulkLoad.addColumn("フリガナ", Tedious.TYPES.NVarChar, { length: 20, nullable: true, objName: "Furigana1"});
     
     /*
     bulkLoad.addColumn('No', Tedious.TYPES.SmallInt, { nullable: false });
@@ -75,8 +75,8 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
       }
       bulkLoad.addRow(boatRacer["登録番号"], boatRacer["名前"], boatRacer["フリガナ"]);
       */
-      bulkLoad.addRow([boatRacer.No1, boatRacer.Name1, boatRacer.Furigana1]);
-      //bulkLoad.addRow(boatRacer);
+      // bulkLoad.addRow([boatRacer.No1, boatRacer.Name1, boatRacer.Furigana1]);
+      bulkLoad.addRow(boatRacer);
       
       console.log('行追加成功:' + JSON.stringify(boatRacer));
     });
