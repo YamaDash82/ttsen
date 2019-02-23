@@ -19,3 +19,25 @@ export class ResultData {
     this.records = [];
   }
 }
+
+//SQL処理タイプ 
+export enum SQLProcessType {
+  None,
+  InsertWithRecords, 
+  Insert, 
+  Update, 
+  Delete
+}
+
+//SQL処理
+export class SQLProcess {
+  source: string; 
+  records: any[];
+  type: SQLProcessType
+
+  constructor(){
+    this.source = "";
+    this.records = [];
+    this.type = SQLProcessType.None; 
+  }
+}

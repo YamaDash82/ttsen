@@ -8,6 +8,7 @@ import queryInput from './routes/query-input';
 import bulkLoadTest from './routes/bulk-load-test';
 import deleteInsert from './routes/delete-insert';
 import transactionTest from './routes/transaction-test';
+import transactionManagerTest from './routes/transaction-manager-test';
 
 //import { cookieParser } from 'cookie-parser';
 const cookieParser = require('cookie-parser');
@@ -25,6 +26,7 @@ app.use('/query-input', queryInput);
 app.use('/bulk-load-test', bulkLoadTest);
 app.use('/delete-insert', deleteInsert);
 app.use('/transaction-test', transactionTest);
+app.use('/transaction-manager-test', transactionManagerTest);
 
 app.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
     return res.send('Hello TTSEN Page.');
