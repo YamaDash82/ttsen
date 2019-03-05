@@ -1,10 +1,11 @@
 import * as Express from 'express';
 import { TransactionManager } from '../yycomp/transaction-manager';
-import { SQLProcess } from '../yycomp/declarations';
+import { SQLProcess } from '../yycomp/sql-process';
 
 const router = Express.Router();
 
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+/*
   const tranManager = new TransactionManager();
   
   let delSQL : SQLProcess = new SQLProcess();
@@ -22,6 +23,7 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
   ).catch(
     (error) => { res.send(error); }
   );
+*/
 });
 
 export default router;

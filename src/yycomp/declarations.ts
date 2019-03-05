@@ -1,3 +1,6 @@
+import { TediousType } from 'tedious';
+import { BaseModel } from './models/base-model';
+
 //要求クエリ
 export interface RequestedQuery {
   queryName: string;
@@ -20,24 +23,21 @@ export class ResultData {
   }
 }
 
-//SQL処理タイプ 
-export enum SQLProcessType {
-  None,
-  InsertWithRecords, 
-  Insert, 
-  Update, 
-  Delete
+export enum TSDataType {
+  TYPE_NUMBER, 
+  TYPE_STRING
+}
+export interface Attribute {
+  [index: string] : {
+    sqlDataType: TediousType;
+    dataType: TSDataType;
+    primaryKye: boolean;
+    allowNull: boolean;
+    defaultValue ?: any;
+    length ?: number;
+  }
 }
 
-//SQL処理
-export class SQLProcess {
-  source: string; 
-  records: any[];
-  type: SQLProcessType
-
-  constructor(){
-    this.source = "";
-    this.records = [];
-    this.type = SQLProcessType.None; 
-  }
+export interface DataRow {
+  [key: string]: any;
 }

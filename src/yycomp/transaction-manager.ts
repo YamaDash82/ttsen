@@ -1,4 +1,6 @@
-import { SQLProcess } from './declarations';
+import { DataRow, TSDataType } from './declarations';
+import { SQLProcess, SQLProcessType } from './sql-process';
+
 import * as Tedious from 'tedious';
 import { ConnectionFactory } from '../yycomp/connection-factory';
 
@@ -15,6 +17,9 @@ export class TransactionManager {
   //接続オブジェクト
   private conn: Tedious.Connection;
 
+  //トランザクション中フラグ
+  isDuringTransaction: boolean;
+
   //コンストラクタ
   constructor(){
     this.preprocesses = [];
@@ -22,6 +27,7 @@ export class TransactionManager {
     this.postProcesses = [];
     this.sequentialPromises = [];
     this.conn = ConnectionFactory.getConnection();
+    this.isDuringTransaction = false;
   }
 
   //前処理追加
@@ -42,21 +48,84 @@ export class TransactionManager {
   //順次処理追加処理
   //Insert、Update、Deleteを行うSQLProcessをPromiseに変換しつつ、配列に追加する。
   private addSequentialPromise(process: SQLProcess) : void {
-    this.sequentialPromises.push(():Promise<any> => {
-      return new Promise((resolve, reject) => {
-        const request = new Tedious.Request(process.source, (error, rowCount) => {
-          if (error) {
-            return reject(error);
+    switch(process.type) {
+      case SQLProcessType.InsertWithRecords:
+        //ソースを生成する。
+        let source: string = process.source + ' VALUES ';
+        let rowsCount = 0, fieldsCount = 0;
+
+        for(let row of process.rows){
+          if(rowsCount++>0) source += ',';
+
+          source += "(";
+          for(let key in process.model.attributes){
+            let attr = process.model.attributes[key];
+            
+            if (fieldsCount++ > 0) source += ',';
+            
+            switch(attr.dataType){
+              case TSDataType.TYPE_STRING:
+                source += `'${row[key]}'`;
+                break;
+              default:
+                source += `${row[key]}`;
+                break;
+            }
           }
+          source += ')';
+          fieldsCount = 0;
+        }
+        
+        console.log(source);
 
-          return resolve(rowCount);
+        this.sequentialPromises.push(():Promise<any> => {
+          return new Promise((resolve, reject) => {
+            const request = new Tedious.Request(source, (error, rowCount) => {
+              if (error) {
+                return reject(error);
+              }
+      
+                return resolve(rowCount);
+              });
+      
+              this.conn.execSql(request);
+            });
+          });
+        break;
+      default: 
+        this.sequentialPromises.push(():Promise<any> => {
+          return new Promise((resolve, reject) => {
+            console.log('source:' + process.source);
+            const request = new Tedious.Request(process.source, (error, rowCount) => {
+              if (error) {
+                return reject(error);
+              }
+    
+              return resolve(rowCount);
+            });
+    
+            this.conn.execSql(request);
+          });
         });
-
-        this.conn.execSql(request);
-      });
-    });
+        break;
+    }
   }
 
+
+  //ロールバック処理
+  private rollback():Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.conn.rollbackTransaction((error) => {
+        if(error){
+          return reject(error);
+        }
+        //トランザクション中フラグを戻す。
+        this.isDuringTransaction = false;
+
+        return resolve();
+      })
+    });
+  }
   //実行
   public execute(): Promise<any> {
     //処理群に接続処理を追加する。
@@ -68,8 +137,8 @@ export class TransactionManager {
           }
 
           return resolve();
-        })
-      })
+        });
+      });
     });
     //前処理群の各処理をProimseに変換し、処理郡に追加する。
     this.preprocesses.forEach((process: SQLProcess) => {
@@ -79,6 +148,8 @@ export class TransactionManager {
     //シーケンスにトランザクション開始処理を追加する。
     this.sequentialPromises.push(():Promise<any> => {
       return new Promise((resolve, reject) => {
+        //トランザクション中フラグを立てる。
+        this.isDuringTransaction = true;
         this.conn.beginTransaction((error) => {
           if (error) {
             return reject(error);  
@@ -100,6 +171,9 @@ export class TransactionManager {
           if(error){
             return reject();
           }
+          //トランザクション中処理を戻す。
+          this.isDuringTransaction = false;
+
           return resolve();
         });
       });
@@ -114,6 +188,14 @@ export class TransactionManager {
     return this.sequentialPromises.reduce((promise, task) => {
       return promise.then(() => {
         return task();
+      })
+      .catch((error) => {
+        if(this.isDuringTransaction) {
+          return this.rollback();
+        } else {
+          //エラーが発生したとき、次のタスクを実行すべきか要調査。
+          return Promise.reject(error);
+        }
       });
     }, Promise.resolve());
   }
