@@ -16,6 +16,19 @@ const cookieParser = require('cookie-parser');
 
 const app = Express();
 
+let allowCrossDomain = (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    //res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+    //res.header('Access-Control-Allow-Credentials', 'true');
+    //res.header('Access-Control-Allow-Method', 'GET,POST');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    //res.setHeader('Set-Cookie', ['keyword=Donkey']);
+    //res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    //res.header('Access-Control-Max-Age', '864000')
+    next();
+};
+
+app.use(allowCrossDomain);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(cookieParser());

@@ -1,5 +1,6 @@
-import { TediousType } from 'tedious';
-import { BaseModel } from './models/base-model';
+//import { TediousType } from 'tedious';
+
+import { SQLProcess } from './sql-process';
 
 //要求クエリ
 export interface RequestedQuery {
@@ -29,7 +30,7 @@ export enum TSDataType {
 }
 export interface Attribute {
   [index: string] : {
-    sqlDataType: TediousType;
+//    sqlDataType: TediousType;
     dataType: TSDataType;
     primaryKye: boolean;
     allowNull: boolean;
@@ -40,4 +41,8 @@ export interface Attribute {
 
 export interface DataRow {
   [key: string]: any;
+}
+
+export class SQLProcesses {
+  processes : SQLProcess[] = [];
 }

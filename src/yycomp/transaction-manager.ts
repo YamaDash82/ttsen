@@ -4,6 +4,15 @@ import { SQLProcess, SQLProcessType } from './sql-process';
 import * as Tedious from 'tedious';
 import { ConnectionFactory } from '../yycomp/connection-factory';
 
+//エラーの定義
+export class TransactionError extends Error {
+  constructor(public message : string){
+    super(message);
+
+    this.name = "TransactionError";
+  }
+}
+
 export class TransactionManager {
   //メンバ
   //前処理群
@@ -18,7 +27,7 @@ export class TransactionManager {
   private conn: Tedious.Connection;
 
   //トランザクション中フラグ
-  isDuringTransaction: boolean;
+  private isDuringTransaction: boolean;
 
   //コンストラクタ
   constructor(){
@@ -122,7 +131,8 @@ export class TransactionManager {
         //トランザクション中フラグを戻す。
         this.isDuringTransaction = false;
 
-        return resolve();
+        //return resolve();
+        return reject(new TransactionError('トランザクション中にエラーが発生'));
       })
     });
   }
@@ -191,7 +201,9 @@ export class TransactionManager {
       })
       .catch((error) => {
         if(this.isDuringTransaction) {
+          //トランザクションをロールバックする。
           return this.rollback();
+          //return Promise.reject(new Error('トランザクション中にエラーが発生。ロールバックしました。'));
         } else {
           //エラーが発生したとき、次のタスクを実行すべきか要調査。
           return Promise.reject(error);

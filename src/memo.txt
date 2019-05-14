@@ -1,40 +1,41 @@
-[
-  {
-    "queryName":"M_ボートレーサー",
-    "records":[
-      {"登録番号":4444,"名前":"桐生　順平","フリガナ":"ｷﾘｭｳ　ｼﾞｭﾝﾍﾟｲ"},
-      {"登録番号":4150,"名前":"山田　雄太","フリガナ":"ﾔﾏﾀﾞ　ﾕｳﾀ"},
-      {"登録番号":4678,"名前":"水野　望美","フリガナ":"ﾐｽﾞﾉ　ﾉｿﾞﾐ"},
-      {"登録番号":3294,"名前":"野中　義生","フリガナ":"ﾉﾅｶ　ﾖｼｵ"}
-    ]
-  },
-  {
-    "queryName":"M_ボートレース場",
-    "records":[
-      {"番号":1,"名称":"桐生"},
-      {"番号":2,"名称":"戸田"},
-      {"番号":3,"名称":"江戸川"},
-      {"番号":4,"名称":"平和島"},
-      {"番号":5,"名称":"多摩川"},
-      {"番号":6,"名称":"浜名湖"},
-      {"番号":7,"名称":"蒲郡"},
-      {"番号":8,"名称":"常滑"},
-      {"番号":9,"名称":"津"},
-      {"番号":10,"名称":"三国"},
-      {"番号":11,"名称":"びわこ"},
-      {"番号":12,"名称":"住之江"},
-      {"番号":13,"名称":"尼崎"},
-      {"番号":14,"名称":"鳴門"},
-      {"番号":15,"名称":"丸亀"},
-      {"番号":16,"名称":"児島"},
-      {"番号":17,"名称":"宮島"},
-      {"番号":18,"名称":"徳山"},
-      {"番号":19,"名称":"下関"},
-      {"番号":20,"名称":"若松"},
-      {"番号":21,"名称":"芦屋"},
-      {"番号":22,"名称":"福岡"},
-      {"番号":23,"名称":"唐津"},
-      {"番号":24,"名称":"大村"}
-    ]
+{
+  "source":"DELETE R FROM [BoatRace].dbo.[M_ボートレーサー] AS R WHERE 登録番号 IN (1854, 1855)",
+  "rows":[],
+  "type":4,
+  "_model":{
+    "insertRows":[],
+    "tableName":"M_ボートレーサー",
+    "dbo":"BoatRace",
+    "_attributes":{
+      "登録番号":{
+        "sqlDataType":{"id":56,"type":"INT4","name":"Int"},
+        "dataType":0,
+        "primaryKye":true,
+        "allowNull":false
+        },
+      "名前":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20},
+      "フリガナ":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20}
+    }
   }
-]
+}
+{
+  "source":"INSERT INTO [BoatRace].dbo.[M_ボートレーサー] ([登録番号],[名前],[フリガナ])",
+  "rows":[
+    {"登録番号":1854,"名前":"レーサー太郎2","フリガナ":"ﾚｰｻｰﾀﾛｳ2"},
+    {"登録番号":1855,"名前":"レーサー花子2","フリガナ":"ﾚｰｻｰﾊﾅｺ2"}
+  ],
+  "type":1,
+  "_model":{
+    "insertRows":[
+      {"登録番号":1854,"名前":"レーサー太郎2","フリガナ":"ﾚｰｻｰﾀﾛｳ2"},
+      {"登録番号":1855,"名前":"レーサー花子2","フリガナ":"ﾚｰｻｰﾊﾅｺ2"}
+    ],
+    "tableName":"M_ボートレーサー",
+    "dbo":"BoatRace",
+    "_attributes":{
+      "登録番号":{"sqlDataType":{"id":56,"type":"INT4","name":"Int"},"dataType":0,"primaryKye":true,"allowNull":false},
+      "名前":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20},
+      "フリガナ":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20}
+    }
+  }
+}

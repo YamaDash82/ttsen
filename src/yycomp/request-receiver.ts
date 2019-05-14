@@ -7,7 +7,7 @@ import * as Express from 'express';
 export class RequestReceiver {
   //フィールド
   //要求データ
-  private requestedData: RequestedData;
+  //private requestedData: RequestedData;
   private conn: ConnectionFactory;
   private requests: RequestManager[];
   private currentExecute: number;
@@ -15,9 +15,9 @@ export class RequestReceiver {
   
   //コンストラクタ　
   //receivedData: フロントからポスト送信され、それを受信したデータ
-  constructor(private receivedData: any, res: Express.Response){
+  constructor(private requestedData: RequestedData, private res: Express.Response){
     //受信データをパースし、要求データとして受け取る。(例外処理を組み込む予定。)
-    this.requestedData = JSON.parse(receivedData);
+    //this.requestedData = JSON.parse(receivedData);
     console.log(JSON.stringify(this.requestedData));
 
     //データベースと接続する。
@@ -40,7 +40,7 @@ export class RequestReceiver {
         if(++this.currentExecute in this.requests) {
           this.conn.execSql(this.requests[this.currentExecute].request);
         } else {
-          res.json(this.resultDatas);
+          this.res.json(this.resultDatas);
         }
       });
 

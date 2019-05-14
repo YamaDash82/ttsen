@@ -10,7 +10,8 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
 
   const model = new M_ボートレーサーModel();
   
-  tranManager.addMainProcesses(model.deleteSQLFactory('登録番号 IN (1854, 1855)'))
+  console.log(JSON.stringify(model.deleteSQLFactory('登録番号 IN (1854, 1855)')));
+  tranManager.addMainProcesses(model.deleteSQLFactory('登録番号 IN (1854, 1855)'));
 
   let row = model.getNewRow();
   row['登録番号'] = 1854;
@@ -23,12 +24,23 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
   row2['名前'] = 'レーサー花子2';
   row2['フリガナ'] = 'ﾚｰｻｰﾊﾅｺ2';
   model.addInsertRow(row2);
+
+  console.log(JSON.stringify(model.insertSQLFactory()));
+  
   tranManager.addMainProcesses(model.insertSQLFactory());
   tranManager.execute().then(() => {
     res.json('Success');
   })
   .catch((error) => {
+    console.log(`エラー内容：${error}`);
+    if ( error instanceof Error ){
+      console.log('errorはErrorのインスタンスです');
+    } else {
+      console.log('errorはErrorのインスタンスではないです');
+    }
+    
     res.json(error);
+    
   });
 
 });

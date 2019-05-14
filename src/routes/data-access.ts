@@ -19,20 +19,34 @@ const dummyRequestData: RequestedData = {
 
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
   //RequestReceiverクラスのインスタンスを生成する。
-  const requestReceiver = new RequestReceiver(JSON.stringify(dummyRequestData), res);
+  console.log('get');
+  console.log(JSON.stringify(req.query));
+  let requestedData: RequestedData = {
+    requests: [
+      req.query
+    ]
+  }
+  const requestReceiver = new RequestReceiver(requestedData, res);
+  
   //処理を実行する。requestReceiverに渡したResponseに取得したデータを渡してフロントに返している。
   requestReceiver.execute();
 });
 
 router.post('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
   //RequestReceiverクラスのインスタンスを生成する。
+  /**
   let requestedData: RequestedData = {
     requests: [
       req.body
     ]
   };
-
-  const requestReceiver = new RequestReceiver(JSON.stringify(requestedData), res);
+  */
+  console.log('post');
+  console.log(`受信:${JSON.stringify(req.body)}`);
+  console.log(`生データ${req.body}`);
+  let requestedData: RequestedData = <RequestedData>req.body;
+  console.log('通過');
+  const requestReceiver = new RequestReceiver(requestedData, res);
   //処理を実行する。requestReceiverに渡したResponseに取得したデータを渡してフロントに返している。
   requestReceiver.execute();
 });
