@@ -9,7 +9,8 @@ import bulkLoadTest from './routes/bulk-load-test';
 import deleteInsert from './routes/delete-insert';
 import transactionTest from './routes/transaction-test';
 import transactionManagerTest from './routes/transaction-manager-test';
-import modelTest from './routes/model-test';
+import modelTest from './routes/model-test2';
+import selectData from './routes/select-data';
 
 //import { cookieParser } from 'cookie-parser';
 const cookieParser = require('cookie-parser');
@@ -42,6 +43,7 @@ app.use('/delete-insert', deleteInsert);
 app.use('/transaction-test', transactionTest);
 app.use('/transaction-manager-test', transactionManagerTest);
 app.use('/model-test', modelTest);
+app.use('/select-data', selectData);
 
 app.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
     return res.send('Hello TTSEN Page.');

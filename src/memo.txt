@@ -1,41 +1,17 @@
 {
-  "source":"DELETE R FROM [BoatRace].dbo.[M_ボートレーサー] AS R WHERE 登録番号 IN (1854, 1855)",
-  "rows":[],
-  "type":4,
-  "_model":{
-    "insertRows":[],
-    "tableName":"M_ボートレーサー",
-    "dbo":"BoatRace",
-    "_attributes":{
-      "登録番号":{
-        "sqlDataType":{"id":56,"type":"INT4","name":"Int"},
-        "dataType":0,
-        "primaryKye":true,
-        "allowNull":false
-        },
-      "名前":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20},
-      "フリガナ":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20}
-    }
-  }
-}
-{
-  "source":"INSERT INTO [BoatRace].dbo.[M_ボートレーサー] ([登録番号],[名前],[フリガナ])",
-  "rows":[
-    {"登録番号":1854,"名前":"レーサー太郎2","フリガナ":"ﾚｰｻｰﾀﾛｳ2"},
-    {"登録番号":1855,"名前":"レーサー花子2","フリガナ":"ﾚｰｻｰﾊﾅｺ2"}
-  ],
-  "type":1,
-  "_model":{
-    "insertRows":[
-      {"登録番号":1854,"名前":"レーサー太郎2","フリガナ":"ﾚｰｻｰﾀﾛｳ2"},
-      {"登録番号":1855,"名前":"レーサー花子2","フリガナ":"ﾚｰｻｰﾊﾅｺ2"}
-    ],
-    "tableName":"M_ボートレーサー",
-    "dbo":"BoatRace",
-    "_attributes":{
-      "登録番号":{"sqlDataType":{"id":56,"type":"INT4","name":"Int"},"dataType":0,"primaryKye":true,"allowNull":false},
-      "名前":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20},
-      "フリガナ":{"sqlDataType":{"id":167,"type":"BIGVARCHR","name":"VarChar","hasCollation":true,"dataLengthLength":2,"maximumLength":8000},"dataType":1,"primaryKye":false,"allowNull":true,"length":20}
-    }
-  }
+  "source": "",
+  "rows": [],
+  "type": 0,
+  "_model": {
+    "insertRows": [
+      { "登録番号": 5000, "名前": "だれやねん", "フリガナ": "ﾀﾞﾚﾔﾈﾝ" } 
+    ], 
+    "tableName": "M_ボートレーサー", 
+    "dbo": "BoatRace", 
+    "_attributes": { 
+      "登録番号": { "dataType": 0, "primaryKye": true, "allowNull": false }, 
+      "名前": { "dataType": 1, "primaryKye": false, "allowNull": true, "length": 20 }, 
+      "フリガナ": { "dataType": 1, "primaryKye": false, "allowNull": true, "length": 20 } 
+    } 
+  } 
 }

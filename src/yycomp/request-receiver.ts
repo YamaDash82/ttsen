@@ -1,5 +1,5 @@
 import { RequestedData, RequestedQuery, ResultData } from './declarations';
-import { ConnectionError } from 'tedious';
+import { ConnectionError, TediousType, Connection } from 'tedious';
 import { ConnectionFactory } from './connection-factory'; 
 import { RequestManager } from './request';
 import * as Express from 'express';
@@ -8,7 +8,7 @@ export class RequestReceiver {
   //フィールド
   //要求データ
   //private requestedData: RequestedData;
-  private conn: ConnectionFactory;
+  private conn: Connection;
   private requests: RequestManager[];
   private currentExecute: number;
   private resultDatas: ResultData[];
@@ -32,8 +32,9 @@ export class RequestReceiver {
 
     //要求データ中の要求SQLを巡回し、TediousのRequestクラスのインスタンスを生成する。
     this.requestedData.requests.forEach((requestedQuery: RequestedQuery) => {
-      const request = new RequestManager(requestedQuery.queryName, requestedQuery.source);
+      const request = new RequestManager(requestedQuery.queryName, requestedQuery.source, this.conn);
       
+      /*
       request.prepare((resultData: ResultData) => {
         this.resultDatas.push(resultData);
 
@@ -43,6 +44,7 @@ export class RequestReceiver {
           this.res.json(this.resultDatas);
         }
       });
+      */
 
       this.requests.push(request);
     });
@@ -50,6 +52,7 @@ export class RequestReceiver {
   
   //実行処理
   public execute():void {
+    /*
     //最初の取得処理を実行する。
     this.conn.on('connect', (error: ConnectionError) => {
       if(error){
@@ -58,5 +61,12 @@ export class RequestReceiver {
 
       this.conn.execSql(this.requests[0].request);
     });
+    */
+/*
+    this.requests.reduce((promise, request: RequestManager) => {
+      return promise().then(request.execute())
+    }, Promise.resolve);
+*/
   }
+  
 }

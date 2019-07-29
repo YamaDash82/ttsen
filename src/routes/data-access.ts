@@ -41,14 +41,18 @@ router.post('/', (req: Express.Request, res: Express.Response, next: Express.Nex
     ]
   };
   */
+
+  
   console.log('post');
-  console.log(`受信:${JSON.stringify(req.body)}`);
+  console.log(`受信:${JSON.stringify(req.body.body)}`);
   console.log(`生データ${req.body}`);
-  let requestedData: RequestedData = <RequestedData>req.body;
+  let requestedData: RequestedData = <RequestedData>JSON.parse(req.body.body);
   console.log('通過');
   const requestReceiver = new RequestReceiver(requestedData, res);
   //処理を実行する。requestReceiverに渡したResponseに取得したデータを渡してフロントに返している。
+  console.log('before execute');
   requestReceiver.execute();
+  console.log('finish');
 });
 
 export default router;

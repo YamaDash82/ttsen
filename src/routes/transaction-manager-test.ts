@@ -2,30 +2,23 @@ import * as Express from 'express';
 import { TransactionManager } from '../yycomp/transaction-manager';
 import { SQLProcess } from '../yycomp/sql-process';
 import { SQLProcesses } from '../yycomp/declarations';
-import { runInNewContext } from 'vm';
+import { M_ボートレーサーModel } from '../yycomp/models/M_ボートレーサーModel';
+import { DataRow } from '../yycomp/declarations';
 
 const router = Express.Router();
 
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-/*
-  const tranManager = new TransactionManager();
-  
-  let delSQL : SQLProcess = new SQLProcess();
+  const model = new M_ボートレーサーModel();
+  const row :DataRow = model.getNewRow();
+  row['登録番号'] = 5000;
+  row['名前'] = "だれやねん";
+  row['フリガナ'] = 'ﾀﾞﾚﾔﾈﾝ';
+  model.addInsertRow(row);
 
-  delSQL.source = "DELETE FROM BoatRace.dbo.M_ボートレース場 WHERE 番号 = 7"; 
-  
-  let insSQL = new SQLProcess();
-  insSQL.source = "INSERT INTO BoatRace.dbo.M_ボートレース場 (番号, 名称) VALUES (7, '名古屋')";
-  
-  tranManager.addMainProcesses(delSQL);
-  tranManager.addMainProcesses(insSQL);
-
-  tranManager.execute().then(
-    () => { res.send("成功"); }
-  ).catch(
-    (error) => { res.send(error); }
-  );
-*/
+  const process: SQLProcess = new SQLProcess(model);
+  console.log(process);
+  console.log(JSON.parse(JSON.stringify(process)));
+  res.send(JSON.stringify(process, null, '  '));
 });
 
 router.post('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
