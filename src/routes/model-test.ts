@@ -1,11 +1,11 @@
 import * as Express from 'express';
 import { M_ボートレーサーModel } from '../yycomp/models/M_ボートレーサーModel';
-import { TransactionManager } from '../yycomp/transaction-manager';
+import { TransactionManager } from '../yycomp/transaction-manager/transaction-manager';
 
 const router = Express.Router();
 
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
-
+/*
   const tranManager = new TransactionManager();
 
   const model = new M_ボートレーサーModel();
@@ -42,7 +42,7 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
     res.json(error);
     
   });
-
+*/
 });
 
 export default router;

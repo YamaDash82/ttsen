@@ -1,7 +1,7 @@
 import * as Express from 'express';
 import * as Tables from '../yycomp/base-table/base-table';
 import { SQLCommand, InsertSQLCommand } from  '../yycomp/sql-command/sql-command';
-import { M_ボートレーサーTable } from '../yycomp/tables/boat-racer-m_ボートレーサー.table';
+//import { M_ボートレーサーTable } from '../yycomp/tables/boat-racer-m_ボートレーサー.table';
 
 const router = Express.Router();
 
@@ -13,9 +13,10 @@ interface BoatRacer {
 };
 
 router.get('/', (req: Express.Request, res: Express.Response, next: Express.NextFunction) => {
+/*
   const table = new M_ボートレーサーTable();
   const command = new InsertSQLCommand(table);
-/*
+
   const rows : BoatRacer[] = [
     {
       登録番号: 4150, 
@@ -52,7 +53,7 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
     フリガナ: 'ｶﾒﾝﾗｲﾀﾞｰ'
   });
 
-
+/*
   for(let r of rows){
     const newRow = table.getNewRow();
 
@@ -77,7 +78,7 @@ router.get('/', (req: Express.Request, res: Express.Response, next: Express.Next
 
   res.send('Success');
 
-
+*/
 });
 
 export default router;

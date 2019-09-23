@@ -1,4 +1,4 @@
-import { Table, ISAttributes, FieldDataType as FldDtType } from '../base-table/base-table';
+import { Table, ISAttributes, FieldDataType as FldDtType } from '../../../yycomp/base-table/base-table';
 
 export class M_ボートレーサーTable extends Table {
   protected _tableName: string = "M_ボートレーサー";
@@ -26,5 +26,5 @@ export class M_ボートレーサーTable extends Table {
       defaultValue: '', 
       length: 20
     }
-  };  
+  };
 }

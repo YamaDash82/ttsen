@@ -1,10 +1,16 @@
 import { Table, ISDataRow, FieldDataType } from '../base-table/base-table';
 
-
 //テーブルに対するSQLCommandを保持したり、生成したりするクラスの抽象クラス。
 export abstract class SQLCommand {
   protected abstract  table : Table;
   abstract getCommands(): string[];
+  protected abstract toJSON(): Object;
+
+
+  static restoreFromJSON(jsonParsedObj: object): SQLCommand {
+    throw new Error('restoreFromJsonメソッドは、継承クラスで実装してください');
+  }
+
 }
 
 
@@ -26,6 +32,14 @@ export class InsertSQLCommand extends SQLCommand {
 
   get additionalRows(): ISDataRow[] {
     return this._additionalRows;
+  }
+
+  protected toJSON(): object {
+    return {
+      className: this.constructor.name,
+      table: this.table,
+      additionalRows: this._additionalRows
+    };
   }
 
   //挿入SQL文を生成し、返す。
@@ -104,13 +118,48 @@ export class InsertSQLCommand extends SQLCommand {
 
 export class DeleteSQLCommand extends SQLCommand {
   protected table: Table;
-  
+  private _condition?: SQLExtractCondition;
+
   constructor(table: Table){
     super();
     this.table = table;
+    //this._condition = new SQLExtractCondition();
   }
+
+  get condition(): SQLExtractCondition{
+    if(!this._condition){
+      this._condition = new SQLExtractCondition();
+    }
+    return this._condition;
+  }
+
+  clearCondition(): void {
+    delete this._condition;
+  }
+  /*
+  set condition(condition: SQLExtractCondition){
+    this._condition = condition;
+  }
+  */
+
+  protected toJSON(): object {
+    return {
+      className: this.constructor.name, 
+      table: this.table, 
+      condition: this.condition
+    };
+  }
+
   getCommands(): string[]{
-    return [''];
+    let command: string = `DELETE FROM ${this.table.dbo}.dbo.[${this.table.tableName}]`
+    console.log(`${this._condition}`);
+    if(this._condition){
+      command += ` WHERE ${this._condition.condition}`;
+    } else {
+      console.log(`condition取得できず`);
+    }
+    console.log(command);
+    return [command];
   }
 }
 
@@ -122,7 +171,72 @@ export class UpdateSQLCommand extends SQLCommand {
     this.table = table;
   }
 
+  protected toJSON(): object {
+    return {
+      className: this.constructor.name
+    };
+  }
   getCommands(): string[]{
     return [''];
+  }
+}
+
+
+//SQL抽出条件クラス
+export class SQLExtractCondition {
+  private _conditions: string[][];
+
+  constructor(){
+    this._conditions = [];
+  }
+
+  //条件群設定処理
+  addConditions(conditions: string[]){
+    this._conditions.push(conditions);
+  }
+
+  //条件取得処理
+  get condition(): string {
+    let conditionStr : string = ``;
+    //AND条件を連結した回数をカウントする。
+    let andJoinedCount = 0;
+    this._conditions.forEach((conditions) => {
+        if(andJoinedCount > 0) {
+            conditionStr += ` AND `;
+        }
+        //OR条件を連結した回数をカウントする。
+        let orJoinedCount = 0;
+        conditionStr += `(`;
+        conditions.forEach((condition) => {
+            
+            if(orJoinedCount > 0) {
+                conditionStr += ` OR `;
+            }
+
+            conditionStr += condition;
+            orJoinedCount++;
+        });
+        conditionStr += `)`;
+        andJoinedCount++;
+    });
+    
+    return conditionStr;
+  }
+
+  protected toJSON(): Object {
+    return this._conditions;
+  }
+}
+
+//トランザクションSQLコマンドセット
+export interface ISTransactionSQLCommandSet {
+  preSQLCommands: SQLCommand[], 
+  mainSQLCommands: SQLCommand[], 
+  postSQLCommands: SQLCommand[]
+}
+
+export class TransactionSQLCommandSetRestorer {
+  public static restore(jsonParsedObj: Object): ISTransactionSQLCommandSet{
+    throw new Error('restoreメソッドは継承クラスで実装してください。');
   }
 }

@@ -1,8 +1,9 @@
-import { DataRow, TSDataType } from './declarations';
-import { SQLProcess, SQLProcessType } from './sql-process';
+import { DataRow, TSDataType } from '../declarations';
+//import { SQLProcess, SQLProcessType } from './sql-process';
+import { SQLCommand, InsertSQLCommand, DeleteSQLCommand, UpdateSQLCommand, ISTransactionSQLCommandSet } from '../sql-command/sql-command';
 
 import * as Tedious from 'tedious';
-import { ConnectionFactory } from '../yycomp/connection-factory';
+import { ConnectionFactory } from '../connection-factory';
 
 //エラーの定義
 export class TransactionError extends Error {
@@ -16,11 +17,11 @@ export class TransactionError extends Error {
 export class TransactionManager {
   //メンバ
   //前処理群
-  private preprocesses: SQLProcess[];
+  private preSQLCommands: SQLCommand[];
   //処理群
-  private mainProcesses: SQLProcess[];
+  private mainSQLCommands: SQLCommand[];
   //後処理群
-  private postProcesses: SQLProcess[];
+  private postSQLCommands: SQLCommand[];
   //逐次処理群
   private sequentialPromises : Array<() => Promise<any>>;
   //接続オブジェクト
@@ -31,93 +32,53 @@ export class TransactionManager {
 
   //コンストラクタ
   constructor(){
-    this.preprocesses = [];
-    this.mainProcesses = [];
-    this.postProcesses = [];
+    this.preSQLCommands = [];
+    this.mainSQLCommands = [];
+    this.postSQLCommands = [];
     this.sequentialPromises = [];
     this.conn = ConnectionFactory.getConnection();
     this.isDuringTransaction = false;
   }
 
   //前処理追加
-  public addPreprocesses(process: SQLProcess) : void {
-    this.preprocesses.push(process);
+  public addPreSQLCommand(command: SQLCommand) : void {
+    this.preSQLCommands.push(command);
   }
 
   //メイン処理追加
-  public addMainProcesses(process: SQLProcess) : void {
-    this.mainProcesses.push(process);
+  public addMainSQLCommands(command: SQLCommand) : void {
+    this.mainSQLCommands.push(command);
   }
 
   //後処理追加
-  public addPostProcesses (process: SQLProcess): void {
-    this.postProcesses.push(process);
+  public addPostSQLCommand (command: SQLCommand): void {
+    this.postSQLCommands.push(command);
+  }
+
+  //SQLCommandSet設定処理
+  public setSQLCommandSet(commandSet: ISTransactionSQLCommandSet){
+    //SQLCommand群の参照を渡す。
+    this.preSQLCommands = commandSet.preSQLCommands;
+    this.mainSQLCommands = commandSet.mainSQLCommands;
+    this.postSQLCommands = commandSet.postSQLCommands;
   }
 
   //順次処理追加処理
-  //Insert、Update、Deleteを行うSQLProcessをPromiseに変換しつつ、配列に追加する。
-  private addSequentialPromise(process: SQLProcess) : void {
-    switch(process.type) {
-      case SQLProcessType.InsertWithRecords:
-        //ソースを生成する。
-        let source: string = process.source + ' VALUES ';
-        let rowsCount = 0, fieldsCount = 0;
-
-        for(let row of process.rows){
-          if(rowsCount++>0) source += ',';
-
-          source += "(";
-          for(let key in process.model.attributes){
-            let attr = process.model.attributes[key];
-            
-            if (fieldsCount++ > 0) source += ',';
-            
-            switch(attr.dataType){
-              case TSDataType.TYPE_STRING:
-                source += `'${row[key]}'`;
-                break;
-              default:
-                source += `${row[key]}`;
-                break;
-            }
+  //SQL文をPromiseに変換しながらsequentialPromisesに追加していく。
+  private addSequentialPromise(strSQL : string) : void {
+    this.sequentialPromises.push(():Promise<any>=>{
+      return new Promise((resolve, reject) => {
+        const request = new Tedious.Request(strSQL, (error, rowCount) => {
+          if(error){
+            return reject(error);
           }
-          source += ')';
-          fieldsCount = 0;
-        }
-        
-        console.log(source);
 
-        this.sequentialPromises.push(():Promise<any> => {
-          return new Promise((resolve, reject) => {
-            const request = new Tedious.Request(source, (error, rowCount) => {
-              if (error) {
-                return reject(error);
-              }
-      
-                return resolve(rowCount);
-              });
-      
-              this.conn.execSql(request);
-            });
-          });
-        break;
-      default: 
-        this.sequentialPromises.push(():Promise<any> => {
-          return new Promise((resolve, reject) => {
-            console.log('source:' + process.source);
-            const request = new Tedious.Request(process.source, (error, rowCount) => {
-              if (error) {
-                return reject(error);
-              }
-    
-              return resolve(rowCount);
-            });
-    
-            this.conn.execSql(request);
-          });
+          return resolve(rowCount);
         });
-        break;
-    }
+
+        this.conn.execSql(request);
+      });
+    });
   }
 
 
@@ -151,8 +112,10 @@ export class TransactionManager {
       });
     });
     //前処理群の各処理をProimseに変換し、処理郡に追加する。
-    this.preprocesses.forEach((process: SQLProcess) => {
-      this.addSequentialPromise(process);
+    this.preSQLCommands.forEach((sqlCommand: SQLCommand) => {
+      sqlCommand.getCommands().forEach((command) => {
+        this.addSequentialPromise(command);
+      });
     });
 
     //シーケンスにトランザクション開始処理を追加する。
@@ -170,8 +133,10 @@ export class TransactionManager {
     });
 
     //メイン処理群の各処理をPromiseに変換し、処理群に追加する。
-    this.mainProcesses.forEach((process: SQLProcess) => {
-      this.addSequentialPromise(process);
+    this.mainSQLCommands.forEach((sqlCommand: SQLCommand) => {
+      sqlCommand.getCommands().forEach((command) => {
+        this.addSequentialPromise(command);
+      });
     });
 
     //コミット処理を処理郡に追加する。
@@ -190,8 +155,10 @@ export class TransactionManager {
     });
 
     //後処理群の各処理をPromiseに変換し、処理郡に追加する。
-    this.postProcesses.forEach((process) => {
-      this.addSequentialPromise(process);
+    this.postSQLCommands.forEach((sqlCommand: SQLCommand) => {
+      sqlCommand.getCommands().forEach((command) => {
+        this.addSequentialPromise(command);
+      });
     }); 
 
     //処理郡を逐次実行する。

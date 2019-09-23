@@ -2,7 +2,11 @@ export abstract class Table {
   protected abstract _tableName: string;
   protected abstract _dbo: string;
   protected abstract _attributes : ISAttributes;
-
+  
+  static restoreFromJSON(jsonParsedObj : object): Table{
+    throw new Error('resotreFromJSONメソッドは、サブクラスで実装する必要があります。');
+  };
+  
   get tableName(): string {
     return this._tableName;
   }
@@ -37,6 +41,24 @@ export abstract class Table {
     Object.seal(row);
 
     return row;
+  }
+  
+  private toJSON(): object {
+    return { 
+      className: this.constructor.name, 
+      dbo: this._dbo, 
+      tableName: this._tableName
+    };
+  }
+}
+
+
+//エラー
+export class TableParseError extends Error {
+  constructor(public message : string){
+    super(message);
+
+    this.name = "TableParseError";
   }
 }
 
